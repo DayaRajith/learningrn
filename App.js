@@ -1,14 +1,34 @@
 
-import React from 'react';
-import { SafeAreaView, StyleSheet, TextInput, View } from 'react-native';
+import React, { useState } from 'react';
+import { SafeAreaView, StyleSheet, TextInput, View,TouchableOpacity } from 'react-native';
 import { Feather } from '@expo/vector-icons'; 
-import AsyncStorage from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 export default function App() {
-  const  [text,onChangeText] = React.useState('');           
+  const  [text,onChangeText] = React.useState('');     
+  const [value,setValue] = useState('');    
+  
+  const saveValue =()=>{
+    if(text){
+      AsyncStorage.setItem('data',text);
+      onChangeText('');
+      alert('Saved');
+    }
+    else{
+      alert('Empty data,please fill');
+    }
+  }
+
+  const getValue = ()=>{
+    AsyncStorage.getItem('data').then((value) => {
+      setValue(value); 
+    })
+  }
+  
   return (
     <>
-    <AsyncStorage />
+   
     <View style={styles.container}>
    
     <View style = {{flex:2,backgroundColor:'#3d8f7a'}}/>
@@ -18,11 +38,32 @@ export default function App() {
     style= {styles.input}
     onChangeText = {onChangeText}
     value = {text}
+    placeholder='Text here'
 
   />
 
+  <TouchableOpacity
+  onPress={saveValue}
+  style = {styles.button}
+  >
+
+  <Text style = {styles.buttonText} >Submit</Text>
+</TouchableOpacity>
+
+<TouchableOpacity
+onPress={getValue}
+  style = {styles.button}
+  >
+
+  <Text style = {styles.buttonText} >Show Entered Values</Text>
+</TouchableOpacity>
+<Text style= {styles.textStyle}>
+  {value}
+</Text>
+
 </SafeAreaView>
-<Text style = {styles.text}>
+{/* the below data should appear after adding the names/details to the text input bar -- pending*/} 
+{/* <Text style = {styles.text}>
             <Text style = {styles.capitalLetter}>
                Total Amount:{}
             </Text>
@@ -43,7 +84,7 @@ export default function App() {
                Stephen<br />
                <Text>Amount:{}</Text>
             </Text>
-
+ */}
 
 
 
@@ -86,4 +127,20 @@ const styles = StyleSheet.create({
       fontWeight: 'bold',
       padding:20,
         },
+
+     button:{
+      color:'white',
+      padding:5,
+      marginTop:20,
+      fontSize:16
+     },
+     
+     buttonText:{
+        color:'white',
+        padding:5,
+     },
+     textStyle:{
+      padding:5,
+      textAlign:'left',
+     }
 });
